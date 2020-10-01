@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Document</title>
 </head>
 <body>
-	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-	  <ul class="navbar-nav">
-	    <li class="nav-item">
-	      <a class="nav-link" href="/doc-uploading">Выгрузка документов</a>
-	    </li>
-	    <li class="nav-item dropdown">
-	      <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-	        Генераторы токенов
-	      </a>
-	      <div class="dropdown-menu">
-	        <a class="dropdown-item" href="/e-inv">E-INV</a>
-	        <a class="dropdown-item" href="/eacq-mapi">EACQ MAPI</a>
-	      </div>
-	    </li>
-	    <li class="nav-item">
-	      <a class="nav-link" href="/cashbox">Отключение кассы</a>
-	    </li>
-          <li class="nav-item">
-              <a class="nav-link" href="/maketest">Пройти 7 и 8 тест-кейсы</a>
-          </li>
-	  </ul>
-	</nav>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="/doc-uploading">Выгрузка документов</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="navbardrop">
+                Генераторы токенов
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="/e-inv">E-INV</a>
+                <a class="dropdown-item" href="/eacq-mapi">EACQ MAPI</a>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/cashbox">Отключение кассы</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/maketest">Пройти 7 и 8 тест-кейсы</a>
+        </li>
+    </ul>
+</nav>
 <div class="container">
     <div class="alert alert-secondary mt-2">
-        Перед отправкой, переключи у терминала CARD_DATA_SCHEME с B на М. Не забудь вернуть обратно после прохождения тест-кейсов.
+        Перед отправкой, переключи у терминала CARD_DATA_SCHEME с B на М, а также PAY_SCHEME на O.
+        Не забудь вернуть обратно после прохождения тест-кейсов.
     </div>
     <div class="row mt-4">
         <div class="col-12">
@@ -48,7 +49,7 @@
     </div>
     <div class="row mt-2">
         <div class="col-12">
-            <button type="submit" class="btn btn-primary" onclick="doSplit()">Submit</button>
+            <button class="btn btn-primary" onclick="doSplit()" type="submit">Submit</button>
         </div>
     </div>
     <div class="row mt-5">
@@ -62,10 +63,12 @@
     let arrTerminals = [];
     let arrPasswords = [];
     let result = document.querySelector('.result');
+
     // получаем рандомное число для OrderId
     function getRandomOrderId() {
         return Math.floor(Math.random() * Math.floor(10000000));
     }
+
     // разбиваем строки на массивы
     function doSplit() {
         let Terminal = document.getElementById('tinkoffTerminals').value
@@ -74,19 +77,20 @@
         arrTerminals = Terminal.split(',');
         arrPasswords = Password.split(',');
 
-        arrTerminals.forEach((element, index) => makePayment(element.trim(), arrPasswords[index].trim(), getRandomOrderId()));
+        arrTerminals.forEach((element, index) => makePayments(element.trim(), arrPasswords[index].trim(), getRandomOrderId()));
     }
-    // формируем чек
-    function makePayment(TerminalKey, Password, OrderId){
-        let cardData7 = "Au7916OagzIFVe+dyoflPTUOk5qZvTTAVi7NCSfHETro0gG9PPpsR2onnlpj4TAXDc30qiH5PQsThSAiZDhNouh5UkH/buHeXIMzBcjEwum0HkZGRPs3fnGHZTjLf1GFPOi3ytQvUaBZURAtUAx+vaDXLnEGR1Hsk4PWxpXZmMJldyPehhjejOX+HoWXILL0wgsiijcWx77jVxaT1LD0fTqDTt9/kkUAQH2P2YRIjkMhR4jjCF8Vu8JyaeAmuY6HVVS93BPfiG713shjuU9MIZF1uX/x1QfUAFZ9K/Hal759okiI11y3MJq6RATSlu+NRWqjQo0voRTzD0xRdXalMQ=="
-        let cardData8 = "vtQjBjX7IoxmUlUfsQQcK1qDKXXKrWMW2+sAFwV9DOFMUWy0zmA9BDhl2w8JqCQOoccJrpoj0RgU49bpLqNfFM8haT64eeKJ72tL0KyOfRzbx8H4W4iCCXq3AW3MNNf0wh2ZfCt5cKPHWhTZzuz6mGKRBYhtuGj2D6XJziQIveXZ25ZaK+hVZ22Bp6m2XYtk1OvpO0SmZY80jzcO5SmstqCATzXLcEG5Onf7yx160Qgiu1Igh8yOZUQsAEMRht22Q2PLhNcV4rIuNIdwGoNBaBeMvAFBXPPuBSOjHJFLx9VQkGWlM91PwfsaYWH9e7vMUtmdNA/fjhH5NQKSyfsv2A=="
 
-        //инициализируем платеж и проводим 7 и 8 тест-кейс
-        Init(TerminalKey, Password, OrderId, cardData7, "7")
-        Init(TerminalKey, Password, OrderId, cardData8, "8")
+    // Проводим платежи
+    function makePayments(TerminalKey, Password, OrderId) {
+        let CardData7 = "Au7916OagzIFVe+dyoflPTUOk5qZvTTAVi7NCSfHETro0gG9PPpsR2onnlpj4TAXDc30qiH5PQsThSAiZDhNouh5UkH/buHeXIMzBcjEwum0HkZGRPs3fnGHZTjLf1GFPOi3ytQvUaBZURAtUAx+vaDXLnEGR1Hsk4PWxpXZmMJldyPehhjejOX+HoWXILL0wgsiijcWx77jVxaT1LD0fTqDTt9/kkUAQH2P2YRIjkMhR4jjCF8Vu8JyaeAmuY6HVVS93BPfiG713shjuU9MIZF1uX/x1QfUAFZ9K/Hal759okiI11y3MJq6RATSlu+NRWqjQo0voRTzD0xRdXalMQ=="
+        let CardData8 = "vtQjBjX7IoxmUlUfsQQcK1qDKXXKrWMW2+sAFwV9DOFMUWy0zmA9BDhl2w8JqCQOoccJrpoj0RgU49bpLqNfFM8haT64eeKJ72tL0KyOfRzbx8H4W4iCCXq3AW3MNNf0wh2ZfCt5cKPHWhTZzuz6mGKRBYhtuGj2D6XJziQIveXZ25ZaK+hVZ22Bp6m2XYtk1OvpO0SmZY80jzcO5SmstqCATzXLcEG5Onf7yx160Qgiu1Igh8yOZUQsAEMRht22Q2PLhNcV4rIuNIdwGoNBaBeMvAFBXPPuBSOjHJFLx9VQkGWlM91PwfsaYWH9e7vMUtmdNA/fjhH5NQKSyfsv2A=="
+
+        Init(TerminalKey, Password, OrderId, CardData7, "7")
+        Init(TerminalKey, Password, OrderId, CardData8, "8")
     }
+
     // инициируем платеж
-    function Init(TerminalKey, Password, OrderId, cardData, test) {
+    function Init(TerminalKey, Password, OrderId, CardData, Test) {
         fetch('https://securepay.tinkoff.ru/v2/Init', {
             method: 'POST',
             headers: {
@@ -113,13 +117,13 @@
             .then(response => response.json())
             .then((json) => {
                 console.log("Init", json)
-                finishAuthorize(json.TerminalKey, json.PaymentId, cardData, Password, test);
-                getState(json.TerminalKey, json.PaymentId, Password);
+                FinishAuthorize(TerminalKey, json.PaymentId, CardData, Password, Test);
             })
             .catch(e => console.log(e));
     }
+
     // проводим оплату
-    function finishAuthorize(TerminalKey, PaymentId, CardData, Password, test){
+    function FinishAuthorize(TerminalKey, PaymentId, CardData, Password, Test) {
         fetch('https://securepay.tinkoff.ru/v2/FinishAuthorize', {
             method: 'POST',
             headers: {
@@ -135,57 +139,67 @@
             .then(response => response.json())
             .then((json) => {
                 console.log("Finish", json)
-                if(json.Success !== false && test !== "7"){
-                    cancel(TerminalKey, PaymentId, Password, test)
-                } else if(json.Success !== false && test === "7"){
-                    result.innerHTML += `<div class="alert alert-success" role="alert">
-                        Terminal: ${TerminalKey} успешно прошел ${test} тест
-                    </div>`;
+                if (json.Success) {
+                    GetState(TerminalKey, PaymentId, Password, Test)
                 } else {
-                    result.innerHTML += `<div class="alert alert-danger" role="alert">
-                        Terminal: ${TerminalKey} не прошел ${test} тест
-                    </div>`;
+                    alert(json);
                 }
             })
             .catch(e => console.log(e));
     }
-    // отменяем платеж
-    function cancel(TerminalKey, PaymentId, Password, test){
-        fetch('https://securepay.tinkoff.ru/v2/Cancel', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "TerminalKey" : TerminalKey,
-                "PaymentId" : PaymentId,
-                "Token" : sha256(Password + PaymentId + TerminalKey)
-            })
-        })
-            .then(response => response.json())
-            .then((json) => {
-                console.log("Cancel", json)
-                result.innerHTML += `<div class="alert alert-success" role="alert">Terminal: ${TerminalKey} успешно прошел ${test} тест</div>`;
-            })
-            .catch(e => console.log(e));
-    }
+
     // запрашиваем статус платежа
-    function getState(TerminalKey, PaymentId, Password){
+    function GetState(TerminalKey, PaymentId, Password, Test) {
         fetch('https://securepay.tinkoff.ru/v2/GetState', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                "TerminalKey" : TerminalKey,
-                "PaymentId" : PaymentId,
-                "Token" : sha256(Password + PaymentId + TerminalKey)
+                "TerminalKey": TerminalKey,
+                "PaymentId": PaymentId,
+                "Token": sha256(Password + PaymentId + TerminalKey)
             })
         })
             .then(response => response.json())
-            .then(json => console.log("getState", json))
+            .then((json) => {
+                console.log("GetState", json)
+                if (json.Status === "CONFIRMED" && Test === "8"){
+                    Cancel(TerminalKey, PaymentId, Password)
+                } else if (json.Status === "CONFIRMED") {
+                    result.innerHTML += `<div class="alert alert-success" role="alert">
+                        Терминал ${TerminalKey} успешно прошел 7 тест
+                    </div>`;
+                } else {
+                    result.innerHTML += `<div class="alert alert-danger" role="alert">
+                        Терминал ${TerminalKey} не прошел ${Test} тест.  (${json.Status})
+                    </div>`;
+                }
+            })
             .catch(e => console.log(e));
     }
+
+    // отменяем платеж 8 платеж
+    function Cancel(TerminalKey, PaymentId, Password) {
+        fetch('https://securepay.tinkoff.ru/v2/Cancel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "TerminalKey": TerminalKey,
+                "PaymentId": PaymentId,
+                "Token": sha256(Password + PaymentId + TerminalKey)
+            })
+        })
+            .then(response => response.json())
+            .then((json) => {
+                console.log("Cancel", json)
+                result.innerHTML += `<div class="alert alert-success" role="alert">Terminal: ${TerminalKey} успешно прошел 8 тест</div>`;
+            })
+            .catch(e => console.log(e));
+    }
+
 </script>
 </body>
 </html>
